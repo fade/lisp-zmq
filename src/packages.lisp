@@ -1,5 +1,6 @@
 
 (defpackage :zeromq
   (:nicknames :zmq)
-  (:use :cl)
-  (:export))
+  (:use :cl :cffi)
+  (:export)
+  (:shadow :close))
