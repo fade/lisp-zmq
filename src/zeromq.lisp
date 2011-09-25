@@ -52,16 +52,23 @@
 (define-error eterm-error :eterm)
 (define-error emthread-error :emthread)
 
-(defun check-return-value (value invalid-value)
-  "Check the return value VALUE. If it's equal to INVALID-VALUE, ie. if it
-indicates an error, signal a suitable error. If not, return VALUE."
-  (if (eq value invalid-value)
-      (let* ((error-code (%errno))
-             (text (%strerror error-code))
-             (keyword (foreign-enum-keyword 'error-code error-code :errorp nil))
-             (condition (gethash keyword *errors* 'zmq-error)))
-        (error condition :code (or keyword error-code) :text text))
-      value))
+(defun call-ffi (invalid-value function &rest args)
+  "Call a low-level function and check its return value. If the return value
+is equal to INVALID-VALUE, a suitable error is signaled. When the error code
+tells that the function was interrupted by a signal (EINTR), the function is
+called until it succeeds. In any case, the return value of the low-level
+function is returned."
+  (tagbody retry
+     (let ((value (apply function args)))
+       (if (eq value invalid-value)
+           (let* ((error-code (%errno))
+                  (description (%strerror error-code))
+                  (keyword (foreign-enum-keyword 'error-code error-code :errorp nil))
+                  (condition (gethash keyword *errors* 'zmq-error)))
+             (case keyword
+               (:eintr (go retry))
+               (t (error condition :code (or keyword error-code) :description description))))
+           (return-from call-ffi value)))))
 
 (defun version ()
   "Return the version of the ZMQ library, a list of three integers (major,
@@ -72,11 +79,11 @@ indicates an error, signal a suitable error. If not, return VALUE."
 
 (defun init (io-threads)
   "Create and return a new context."
-  (check-return-value (%init io-threads) (null-pointer)))
+  (check-ffi-call (null-pointer) '%init io-threads))
 
 (defun term (context)
   "Terminate and release a context"
-  (check-return-value (%term context) -1))
+  (call-ffi -1 '%term context))
 
 (defmacro with-context (var io-threads &body body)
   `(let ((,var (init ,io-threads)))
