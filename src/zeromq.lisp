@@ -79,7 +79,7 @@ function is returned."
 
 (defun init (io-threads)
   "Create and return a new context."
-  (check-ffi-call (null-pointer) '%init io-threads))
+  (call-ffi (null-pointer) '%init io-threads))
 
 (defun term (context)
   "Terminate and release a context"
