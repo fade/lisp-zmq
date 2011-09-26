@@ -141,16 +141,18 @@ function is returned."
 
 (defun getsockopt (socket option)
   "Get the value currently associated to a socket option."
-  (destructuring-bind (type length)
-      (gethash option *socket-options-type*)
-    (with-foreign-objects ((%value type length) (%size 'size-t))
-      (setf (mem-ref %size 'size-t) length)
-      (call-ffi -1 '%getsockopt socket option %value %size)
-      (case option
-        (:identity
-         (when (> (mem-ref %size 'size-t) 0)
-           (foreign-string-to-lisp %value)))
-        (:events
-         (foreign-bitfield-symbols 'event-types (mem-ref %value type)))
-        (t
-         (mem-ref %value type))))))
+  (let ((info (gethash option *socket-options-type*)))
+    (unless info
+      (error "Unknown socket option: ~A." option))
+    (destructuring-bind (type length) info
+      (with-foreign-objects ((%value type length) (%size 'size-t))
+        (setf (mem-ref %size 'size-t) length)
+        (call-ffi -1 '%getsockopt socket option %value %size)
+        (case option
+          (:identity
+           (when (> (mem-ref %size 'size-t) 0)
+             (foreign-string-to-lisp %value)))
+          (:events
+           (foreign-bitfield-symbols 'event-types (mem-ref %value type)))
+          (t
+           (mem-ref %value type)))))))
