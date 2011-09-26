@@ -85,7 +85,7 @@ function is returned."
   "Terminate and release a context"
   (call-ffi -1 '%term context))
 
-(defmacro with-context (var io-threads &body body)
+(defmacro with-context ((var io-threads) &body body)
   `(let ((,var (init ,io-threads)))
      (unwind-protect
           (progn ,@body)
