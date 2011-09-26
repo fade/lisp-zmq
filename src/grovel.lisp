@@ -32,6 +32,11 @@
               ((:eterm "ETERM"))
               ((:emthread "EMTHREAD")))
 
+(bitfield event-types
+          ((:pollin "ZMQ_POLLIN"))
+          ((:pollout "ZMQ_POLLOUT"))
+          ((:pollerr "ZMQ_POLLERR")))
+
 (bitfield recv-options
           ((:noblock "ZMQ_NOBLOCK")))
 
@@ -65,6 +70,7 @@
               ((:unsubscribe "ZMQ_UNSUBSCRIBE"))
               ((:rate "ZMQ_RATE"))
               ((:recovery-ivl "ZMQ_RECOVERY_IVL"))
+              ((:recovery-ivl-msec "ZMQ_RECOVERY_IVL_MSEC"))
               ((:mcast-loop "ZMQ_MCAST_LOOP"))
               ((:sndbuf "ZMQ_SNDBUF"))
               ((:rcvbuf "ZMQ_RCVBUF"))
@@ -75,5 +81,4 @@
               ((:linger "ZMQ_LINGER"))
               ((:reconnect-ivl "ZMQ_RECONNECT_IVL"))
               ((:backlog "ZMQ_BACKLOG"))
-              ((:recovery-ivl-msec "ZMQ_RECOVERY_IVL_MSEC"))
-              ((:reconnect_ivl_max "ZMQ_RECONNECT_IVL_MAX")))
+              ((:reconnect-ivl-max "ZMQ_RECONNECT_IVL_MAX")))

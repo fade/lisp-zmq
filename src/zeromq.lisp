@@ -73,9 +73,9 @@ function is returned."
 (defun version ()
   "Return the version of the ZMQ library, a list of three integers (major,
   minor and patch version)."
-  (with-foreign-objects ((major :int) (minor :int) (patch :int))
-    (%version major minor patch)
-    (list (mem-ref major :int) (mem-ref minor :int) (mem-ref patch :int))))
+  (with-foreign-objects ((%major :int) (%minor :int) (%patch :int))
+    (%version %major %minor %patch)
+    (list (mem-ref %major :int) (mem-ref %minor :int) (mem-ref %patch :int))))
 
 (defun init (io-threads)
   "Create and return a new context."
@@ -93,7 +93,8 @@ function is returned."
 
 (defun socket (context type)
   "Create and return a new socket."
-  (call-ffi (null-pointer) '%socket context type))
+  (call-ffi (null-pointer)
+            '%socket context (foreign-enum-value 'socket-type type)))
 
 (defun close (socket)
   "Close and release a socket."
@@ -104,3 +105,45 @@ function is returned."
      (unwind-protect
           (progn ,@body)
        (close ,var))))
+
+(defvar *socket-options-type* (make-hash-table)
+  "A table to store the foreign type of each socket option.")
+
+(defun define-sockopt-type (option type &optional (length (foreign-type-size type)))
+  (setf (gethash option *socket-options-type*) (list type length)))
+
+(define-sockopt-type :hwm :uint64)
+(define-sockopt-type :swap :int64)
+(define-sockopt-type :affinity :uint64)
+(define-sockopt-type :identity :char 255)
+(define-sockopt-type :rate :int64)
+(define-sockopt-type :recovery-ivl :int64)
+(define-sockopt-type :recovery-ivl-msec :int64)
+(define-sockopt-type :mcast-loop :int64)
+(define-sockopt-type :sndbuf :uint64)
+(define-sockopt-type :rcvbuf :uint64)
+(define-sockopt-type :rcvmore :int64)
+(define-sockopt-type :fd #+win32 win32-socket
+                         #-win32 :int)
+(define-sockopt-type :events :uint32)
+(define-sockopt-type :type :int)
+(define-sockopt-type :linger :int)
+(define-sockopt-type :reconnect-ivl :int)
+(define-sockopt-type :backlog :int)
+(define-sockopt-type :reconnect-ivl-max :int)
+
+(defun getsockopt (socket option)
+  "Get the value currently associated to a socket option."
+  (destructuring-bind (type length)
+      (gethash option *socket-options-type*)
+    (with-foreign-objects ((%value type length) (%size 'size-t))
+      (setf (mem-ref %size 'size-t) length)
+      (call-ffi -1 '%getsockopt socket option %value %size)
+      (case option
+        (:identity
+         (when (> (mem-ref %size 'size-t) 0)
+           (foreign-string-to-lisp %value)))
+        (:events
+         (foreign-bitfield-symbols 'event-types (mem-ref %value type)))
+        (t
+         (mem-ref %value type))))))

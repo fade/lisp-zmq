@@ -34,7 +34,7 @@
   (socket socket)
   (option-name socket-option)
   (option-value :pointer)
-  (option-len size-t))
+  (option-len (:pointer size-t)))
 
 (defcfun (%init "zmq_init") context
   (io-threads :int))
