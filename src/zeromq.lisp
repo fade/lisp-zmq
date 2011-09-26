@@ -106,6 +106,13 @@ function is returned."
           (progn ,@body)
        (close ,var))))
 
+(defmacro with-sockets (bindings &body body)
+  (if bindings
+      `(with-socket ,(car bindings)
+         (with-sockets ,(cdr bindings)
+           ,@body))
+      `(progn ,@body)))
+
 (defvar *socket-options-type* (make-hash-table)
   "A table to store the foreign type of each socket option.")
 
