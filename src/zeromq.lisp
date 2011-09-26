@@ -90,3 +90,17 @@ function is returned."
      (unwind-protect
           (progn ,@body)
        (term ,var))))
+
+(defun socket (context type)
+  "Create and return a new socket."
+  (call-ffi (null-pointer) '%socket context type))
+
+(defun close (socket)
+  "Close and release a socket."
+  (call-ffi -1 '%close socket))
+
+(defmacro with-socket ((var context type) &body body)
+  `(let ((,var (socket ,context ,type)))
+     (unwind-protect
+          (progn ,@body)
+       (close ,var))))
