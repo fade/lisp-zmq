@@ -123,6 +123,8 @@ function is returned."
 (define-sockopt-type :swap :int64)
 (define-sockopt-type :affinity :uint64)
 (define-sockopt-type :identity :char 255)
+(define-sockopt-type :subscribe :char)
+(define-sockopt-type :unsubscribe :char)
 (define-sockopt-type :rate :int64)
 (define-sockopt-type :recovery-ivl :int64)
 (define-sockopt-type :recovery-ivl-msec :int64)
@@ -141,12 +143,13 @@ function is returned."
 
 (defun getsockopt (socket option)
   "Get the value currently associated to a socket option."
+  (when (member option '(:subscribe :unsubscribe))
+    (error "Socket option ~A is write only." option))
   (let ((info (gethash option *socket-options-type*)))
     (unless info
-      (error "Unknown socket option: ~A." option))
+      (error "Unknown socket option ~A." option))
     (destructuring-bind (type length) info
       (with-foreign-objects ((%value type length) (%size 'size-t))
-        (setf (mem-ref %size 'size-t) length)
         (call-ffi -1 '%getsockopt socket option %value %size)
         (case option
           (:identity
@@ -156,3 +159,22 @@ function is returned."
            (foreign-bitfield-symbols 'event-types (mem-ref %value type)))
           (t
            (mem-ref %value type)))))))
+
+(defun setsockopt (socket option value)
+  "Set the value associated to a socket option."
+  (let ((info (gethash option *socket-options-type*)))
+    (unless info
+      (error "Unknown socket option: ~A." option))
+    (destructuring-bind (type length) info
+      (case option
+        ((:subscribe :unsubscribe :identity)
+         (let ((length (length value)))
+           (with-foreign-object (%value :char (+ length 1))
+             (lisp-string-to-foreign value %value (+ length 1))
+             (call-ffi -1 '%setsockopt socket option %value length))))
+        (t
+         (with-foreign-object (%value type length)
+           (setf (mem-ref %value type) (case option
+                                         (:events (foreign-bitfield-value 'event-types value))
+                                         (t value)))
+           (call-ffi -1 '%setsockopt socket option %value length)))))))
