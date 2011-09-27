@@ -178,3 +178,7 @@ function is returned."
                                          (:events (foreign-bitfield-value 'event-types value))
                                          (t value)))
            (call-ffi -1 '%setsockopt socket option %value length)))))))
+
+(defun device (type frontend backend)
+  "Connect a frontend socket to a backend socket. This function always returns -1."
+  (call-ffi 0 '%device (foreign-enum-value 'device-type type) frontend backend))

@@ -82,3 +82,8 @@
               ((:reconnect-ivl "ZMQ_RECONNECT_IVL"))
               ((:backlog "ZMQ_BACKLOG"))
               ((:reconnect-ivl-max "ZMQ_RECONNECT_IVL_MAX")))
+
+(constantenum device-type
+              ((:queue "ZMQ_QUEUE"))
+              ((:forwarder "ZMQ_FORWARDER"))
+              ((:streamer "ZMQ_STREAMER")))

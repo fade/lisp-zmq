@@ -8,7 +8,9 @@
 
            :socket :close :with-socket :with-sockets
 
-           :getsockopt
+           :getsockopt :setsockopt
+
+           :device
 
            :zmq-error
            :einval-error :enodev-error :eintr-error :efault-error :enomem-error

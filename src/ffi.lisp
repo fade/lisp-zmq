@@ -105,3 +105,8 @@
   (major (:pointer :int))
   (minor (:pointer :int))
   (patch (:pointer :int)))
+
+(defcfun (%device "zmq_device") :int
+  (device device-type)
+  (frontend socket)
+  (backend socket))
