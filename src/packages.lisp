@@ -12,6 +12,8 @@
 
            :device
 
+           :msg-init :msg-close :with-msg
+
            :zmq-error
            :einval-error :enodev-error :eintr-error :efault-error :enomem-error
            :eagain-error :emfile-error :enotsup-error :eprotonosupport-error

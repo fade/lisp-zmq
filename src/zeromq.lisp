@@ -86,6 +86,8 @@ function is returned."
   (call-ffi -1 '%term context))
 
 (defmacro with-context ((var io-threads) &body body)
+  "Evaluate BODY in an environment where VAR is binded to a context created
+with IO-THREADS threads."
   `(let ((,var (init ,io-threads)))
      (unwind-protect
           (progn ,@body)
@@ -101,6 +103,8 @@ function is returned."
   (call-ffi -1 '%close socket))
 
 (defmacro with-socket ((var context type) &body body)
+  "Evaluate BODY in an environment where VAR is binded to a socket created in
+context CONTEXT with type TYPE."
   `(let ((,var (socket ,context ,type)))
      (unwind-protect
           (progn ,@body)
@@ -182,3 +186,56 @@ function is returned."
 (defun device (type frontend backend)
   "Connect a frontend socket to a backend socket. This function always returns -1."
   (call-ffi 0 '%device (foreign-enum-value 'device-type type) frontend backend))
+
+(defun msg-init-fill (message data)
+  "Initialize fill and return a message. If DATA is a string, convert it to a
+byte array."
+  (etypecase data
+    (string
+     (with-foreign-string ((%string length) data)
+       (call-ffi -1 '%msg-init-size message length)
+       (%memcpy (%msg-data message) %string length)))
+    ((simple-array (unsigned-byte 8))
+     (with-pointer-to-vector-data (ptr data)
+       (let ((length (length data)))
+         (call-ffi -1 '%msg-init-size message length)
+         (%memcpy (%msg-data message) ptr length))))))
+
+(defun msg-init (&key size data)
+  "Create and return a new message. If SIZE is not NIL, the message is
+  initialized to a fixed size. If DATA is not NIL, the message is initialized
+  with DATA. If neither SIZE nor DATA is not NIL, an uninitialized message is
+  returned."
+  (assert (not (and size data)))
+  (let ((%message (foreign-alloc 'msg)))
+    (unwind-protect
+         (cond
+           (size
+            (call-ffi -1 '%msg-init-size %message size))
+           (data
+            (msg-init-fill %message data))
+           (t
+            (call-ffi -1 '%msg-init %message)))
+      (foreign-free %message))))
+
+(defun msg-close (message)
+  "Release a message, freeing any memory allocated for the message."
+  (unwind-protect
+       (call-ffi -1 '%msg-close message)
+    (foreign-free message)))
+
+(defmacro with-msg ((var &key size data) &body body)
+  "Evaluate BODY in an environment where VAR is binded to a message
+initialized with SIZE or DATA."
+  (assert (not (and size data)))
+  `(with-foreign-object (,var 'msg)
+     ,(cond
+        (size
+         `(call-ffi -1 '%msg-init-size ,var ,size))
+        (data
+         `(msg-init-fill ,var ,data))
+        (t
+         `(call-ffi -1 '%msg-init ,var)))
+     (unwind-protect
+          (progn ,@body)
+       (call-ffi -1 '%msg-close ,var))))

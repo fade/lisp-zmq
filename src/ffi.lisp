@@ -6,6 +6,11 @@
 
 (use-foreign-library libzmq)
 
+(defcfun (%memcpy "memcpy") :pointer
+  (dst  :pointer)
+  (src  :pointer)
+  (len  :long))
+
 (defctype socket :pointer)
 (defctype context :pointer)
 (defctype msg :pointer)
@@ -16,6 +21,12 @@
       #-win32 :int)
   (events :short)
   (revents :short))
+
+(defcstruct msg
+  (content :pointer)
+  (flags :uchar)
+  (vsm-size :uchar)
+  (vsm-data :uchar :count #.max-vsm-size))
 
 (defcfun (%bind "zmq_bind") :int
   (socket socket)
