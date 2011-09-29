@@ -210,13 +210,15 @@ byte array."
   (assert (not (and size data)))
   (let ((%message (foreign-alloc 'msg)))
     (handler-case
-        (cond
-          (size
-           (call-ffi -1 '%msg-init-size %message size))
-          (data
-           (msg-init-fill %message data))
-          (t
-           (call-ffi -1 '%msg-init %message)))
+        (progn
+          (cond
+            (size
+             (call-ffi -1 '%msg-init-size %message size))
+            (data
+             (msg-init-fill %message data))
+            (t
+             (call-ffi -1 '%msg-init %message)))
+          %message)
       (error (cond)
         (foreign-free %message)
         (error cond)))))
