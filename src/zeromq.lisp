@@ -244,3 +244,10 @@ initialized with SIZE or DATA."
      (unwind-protect
           (progn ,@body)
        (call-ffi -1 '%msg-close ,var))))
+
+(defun msg-copy (message)
+  "Create and return a copy of MESSAGE. The copy will need to be released with
+  MSG-CLOSE once you don't need it."
+  (let ((copy (msg-init)))
+    (call-ffi -1 '%msg-copy copy message)
+    copy))

@@ -13,6 +13,7 @@
            :device
 
            :msg-init :msg-close :with-msg
+           :msg-copy
 
            :zmq-error
            :einval-error :enodev-error :eintr-error :efault-error :enomem-error
