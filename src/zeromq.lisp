@@ -249,8 +249,13 @@ initialized with SIZE or DATA."
   "Create and return a copy of MESSAGE. The copy will need to be released with
   MSG-CLOSE once you don't need it."
   (let ((copy (msg-init)))
-    (call-ffi -1 '%msg-copy copy message)
-    copy))
+    (handler-case
+        (progn
+          (call-ffi -1 '%msg-copy copy message)
+          copy)
+      (error (cond)
+        (ignore-errors (msg-close copy))
+        (error cond)))))
 
 (defun send (socket message &optional flags)
   "Queue MESSAGE to be on SOCKET."
@@ -266,4 +271,5 @@ initialized with SIZE or DATA."
                     (foreign-bitfield-value 'recv-options flags))
           message)
       (error (cond)
+        (ignore-errors (msg-close message))
         (error cond)))))
