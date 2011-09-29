@@ -209,15 +209,17 @@ byte array."
   returned."
   (assert (not (and size data)))
   (let ((%message (foreign-alloc 'msg)))
-    (unwind-protect
-         (cond
-           (size
-            (call-ffi -1 '%msg-init-size %message size))
-           (data
-            (msg-init-fill %message data))
-           (t
-            (call-ffi -1 '%msg-init %message)))
-      (foreign-free %message))))
+    (handler-case
+        (cond
+          (size
+           (call-ffi -1 '%msg-init-size %message size))
+          (data
+           (msg-init-fill %message data))
+          (t
+           (call-ffi -1 '%msg-init %message)))
+      (error (cond)
+        (foreign-free %message)
+        (error cond)))))
 
 (defun msg-close (message)
   "Release a message, freeing any memory allocated for the message."
