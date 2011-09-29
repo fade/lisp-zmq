@@ -179,7 +179,8 @@ context CONTEXT with type TYPE."
         (t
          (with-foreign-object (%value type length)
            (setf (mem-ref %value type) (case option
-                                         (:events (foreign-bitfield-value 'event-types value))
+                                         (:events (foreign-bitfield-value
+                                                   'event-types value))
                                          (t value)))
            (call-ffi -1 '%setsockopt socket option %value length)))))))
 
