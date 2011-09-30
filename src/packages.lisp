@@ -13,6 +13,7 @@
            :device
 
            :msg-init :msg-close :with-msg
+           :msg-size
            :msg-copy
 
            :zmq-error

@@ -245,6 +245,10 @@ initialized with SIZE or DATA."
           (progn ,@body)
        (call-ffi -1 '%msg-close ,var))))
 
+(defun msg-size (message)
+  "Return the size in byte of the content of MESSAGE."
+  (%msg-size message))
+
 (defun msg-copy (message)
   "Create and return a copy of MESSAGE. The copy will need to be released with
   MSG-CLOSE once you don't need it."
