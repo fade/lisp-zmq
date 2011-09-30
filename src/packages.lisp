@@ -17,6 +17,8 @@
            :msg-size
            :msg-copy
 
+           :send :recv
+
            :zmq-error
            :einval-error :enodev-error :eintr-error :efault-error :enomem-error
            :eagain-error :emfile-error :enotsup-error :eprotonosupport-error
