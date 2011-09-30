@@ -255,31 +255,16 @@ initialized with SIZE or DATA."
   "Return the size in byte of the content of MESSAGE."
   (%msg-size message))
 
-(defun msg-copy (message)
-  "Create and return a copy of MESSAGE. The copy will need to be released with
-  MSG-CLOSE once you don't need it."
-  (let ((copy (msg-init)))
-    (handler-case
-        (progn
-          (call-ffi -1 '%msg-copy copy message)
-          copy)
-      (error (cond)
-        (ignore-errors (msg-close copy))
-        (error cond)))))
+(defun msg-copy (destination source)
+  "Copy the content of the message SOURCE to the message DESTINATION."
+  (call-ffi -1 '%msg-copy destination source))
 
 (defun send (socket message &optional flags)
   "Queue MESSAGE to be on SOCKET."
   (call-ffi -1 '%send socket message
             (foreign-bitfield-value 'send-options flags)))
 
-(defun recv (socket &optional flags)
-  "Receive and return a message from SOCKET."
-  (let ((message (msg-init)))
-    (handler-case
-        (progn
-          (call-ffi -1 '%recv socket message
-                    (foreign-bitfield-value 'recv-options flags))
-          message)
-      (error (cond)
-        (ignore-errors (msg-close message))
-        (error cond)))))
+(defun recv (socket message &optional flags)
+  "Receive a message from SOCKET and store it in MESSAGE."
+  (call-ffi -1 '%recv socket message
+            (foreign-bitfield-value 'recv-options flags)))
