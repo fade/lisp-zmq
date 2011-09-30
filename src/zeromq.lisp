@@ -263,7 +263,7 @@ initialized with SIZE or DATA."
 
 (defun send (socket message &optional flags)
   "Queue MESSAGE to be on SOCKET."
-  (call-ffi -1 '%msg-send socket message
+  (call-ffi -1 '%send socket message
             (foreign-bitfield-value 'send-options flags)))
 
 (defun recv (socket &optional flags)
@@ -271,7 +271,7 @@ initialized with SIZE or DATA."
   (let ((message (msg-init)))
     (handler-case
         (progn
-          (call-ffi -1 '%msg-recv socket message
+          (call-ffi -1 '%recv socket message
                     (foreign-bitfield-value 'recv-options flags))
           message)
       (error (cond)

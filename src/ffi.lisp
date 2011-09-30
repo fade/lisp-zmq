@@ -86,12 +86,12 @@
   (nitems :int)
   (timeout :long))
 
-(defcfun (%recvmsg "zmq_recv") :int
+(defcfun (%recv "zmq_recv") :int
   (socket socket)
   (msg msg)
   (flags recv-options))
 
-(defcfun (%sendmsg "zmq_send") :int
+(defcfun (%send "zmq_send") :int
   (socket socket)
   (msg msg)
   (flags send-options))
