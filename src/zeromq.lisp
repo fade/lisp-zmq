@@ -268,3 +268,19 @@ initialized with SIZE or DATA."
   "Receive a message from SOCKET and store it in MESSAGE."
   (call-ffi -1 '%recv socket message
             (foreign-bitfield-value 'recv-options flags)))
+
+(defun stopwatch-start ()
+  "Start a timer, and return a handle."
+  (call-ffi (null-pointer) '%stopwatch-start))
+
+(defun stopwatch-stop (handle)
+  "Stop the timer referenced by HANDLE, and return the number of microseconds
+  elapsed since the timer was started."
+  (%stopwatch-stop handle))
+
+(defmacro with-stopwatch (&body body)
+  "Start a timer, evaluate BODY, stop the timer, and return the elapsed time."
+  (let ((handle (gensym)))
+    `(let ((,handle (stopwatch-start)))
+       ,@body
+       (stopwatch-stop ,handle))))

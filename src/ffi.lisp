@@ -121,3 +121,8 @@
   (device device-type)
   (frontend socket)
   (backend socket))
+
+(defcfun (%stopwatch-start "zmq_stopwatch_start") :pointer)
+
+(defcfun (%stopwatch-stop "zmq_stopwatch_stop") :ulong
+  (watch :pointer))
