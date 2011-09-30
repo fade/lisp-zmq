@@ -123,6 +123,11 @@ context CONTEXT with type TYPE."
   (with-foreign-string (%endpoint endpoint)
     (call-ffi -1 '%bind socket %endpoint)))
 
+(defun connect (socket endpoint)
+  "Connect SOCKET to the address ENDPOINT."
+  (with-foreign-string (%endpoint endpoint)
+    (call-ffi -1 '%connect socket %endpoint)))
+
 (defvar *socket-options-type* (make-hash-table)
   "A table to store the foreign type of each socket option.")
 
