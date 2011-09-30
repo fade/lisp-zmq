@@ -7,6 +7,7 @@
            :init :term :with-context
 
            :socket :close :with-socket :with-sockets
+           :bind
 
            :getsockopt :setsockopt
 

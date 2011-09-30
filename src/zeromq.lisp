@@ -117,6 +117,11 @@ context CONTEXT with type TYPE."
            ,@body))
       `(progn ,@body)))
 
+(defun bind (socket endpoint)
+  "Bind SOCKET to the address ENDPOINT."
+  (with-foreign-string (%endpoint endpoint)
+    (call-ffi -1 '%bind socket %endpoint)))
+
 (defvar *socket-options-type* (make-hash-table)
   "A table to store the foreign type of each socket option.")
 
