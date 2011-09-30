@@ -67,7 +67,8 @@ function is returned."
                   (condition (gethash keyword *errors* 'zmq-error)))
              (case keyword
                (:eintr (go retry))
-               (t (error condition :code (or keyword error-code) :description description))))
+               (t (error condition :code (or keyword error-code)
+                                   :description description))))
            (return-from call-ffi value)))))
 
 (defun version ()
