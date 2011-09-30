@@ -5,4 +5,7 @@
   :license "BSD"
   :description "Examples for the zeromq binding."
   :depends-on (:zeromq)
-  :components ((:module "examples" :components ((:file "packages")))))
+  :components ((:module "examples"
+                :components ((:file "packages")
+                             (:file "official-benchmarks"
+                              :depends-on ("packages"))))))
