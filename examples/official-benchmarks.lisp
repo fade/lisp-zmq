@@ -1,7 +1,7 @@
 
 (in-package :zeromq-examples)
 
-(defun locale-thr (address message-size message-count)
+(defun local-thr (address message-size message-count)
   (zmq:with-context (context 1)
     (zmq:with-socket (socket context :sub)
       (zmq:setsockopt socket :subscribe "")
