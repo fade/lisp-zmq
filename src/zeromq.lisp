@@ -213,22 +213,34 @@ byte array."
          (call-ffi -1 '%msg-init-size message length)
          (%memcpy (%msg-data message) ptr length))))))
 
-(defun msg-init (&key size data)
-  "Create and return a new message. If SIZE is not NIL, the message is
-  initialized to a fixed size. If DATA is not NIL, the message is initialized
-  with DATA. If neither SIZE nor DATA is not NIL, an uninitialized message is
-  returned."
-  (assert (not (and size data)))
+(defun msg-init ()
+  "Create and return a new empty message."
   (let ((%message (foreign-alloc 'msg)))
     (handler-case
         (progn
-          (cond
-            (size
-             (call-ffi -1 '%msg-init-size %message size))
-            (data
-             (msg-init-fill %message data))
-            (t
-             (call-ffi -1 '%msg-init %message)))
+          (call-ffi -1 '%msg-init %message)
+          %message)
+      (error (cond)
+        (foreign-free %message)
+        (error cond)))))
+
+(defun msg-init-size (size)
+  "Create and return a new message initialized to a fixed size SIZE."
+  (let ((%message (foreign-alloc 'msg)))
+    (handler-case
+        (progn
+          (call-ffi -1 '%msg-init-size %message size)
+          %message)
+      (error (cond)
+        (foreign-free %message)
+        (error cond)))))
+
+(defun msg-init-data (data)
+  "Create and return a new message initialized and filled with DATA."
+  (let ((%message (foreign-alloc 'msg)))
+    (handler-case
+        (progn
+          (msg-init-fill %message data)
           %message)
       (error (cond)
         (foreign-free %message)
@@ -240,21 +252,32 @@ byte array."
        (call-ffi -1 '%msg-close message)
     (foreign-free message)))
 
-(defmacro with-msg ((var &key size data) &body body)
-  "Evaluate BODY in an environment where VAR is binded to a message
-initialized with SIZE or DATA."
-  (assert (not (and size data)))
+(defmacro with-msg-init ((var) &body body)
+  "Evaluate BODY in an environment where VAR is binded to a new empty
+  message."
   `(with-foreign-object (,var 'msg)
-     ,(cond
-        (size
-         `(call-ffi -1 '%msg-init-size ,var ,size))
-        (data
-         `(msg-init-fill ,var ,data))
-        (t
-         `(call-ffi -1 '%msg-init ,var)))
+     (call-ffi -1 '%msg-init ,var)
      (unwind-protect
           (progn ,@body)
-       (call-ffi -1 '%msg-close ,var))))
+       (ignore-errors (call-ffi -1 '%msg-close ,var)))))
+
+(defmacro with-msg-init-size ((var size) &body body)
+  "Evaluate BODY in an environment where VAR is binded to a new message of
+size SIZE."
+  `(with-foreign-object (,var 'msg)
+     (call-ffi -1 '%msg-init-size ,var ,size)
+     (unwind-protect
+          (progn ,@body)
+       (ignore-errors (call-ffi -1 '%msg-close ,var)))))
+
+(defmacro with-msg-init-data ((var DATA) &body body)
+  "Evaluate BODY in an environment where VAR is binded to a new message filled
+with DATA."
+  `(with-foreign-object (,var 'msg)
+     (msg-init-fill %message ,data)
+     (unwind-protect
+          (progn ,@body)
+       (ignore-errors (call-ffi -1 '%msg-close ,var)))))
 
 (defun msg-size (message)
   "Return the size in byte of the content of MESSAGE."

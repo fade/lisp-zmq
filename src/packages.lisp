@@ -13,7 +13,8 @@
 
            :device
 
-           :msg-init :msg-close :with-msg
+           :msg-init :msg-init-size :msg-init-data :msg-close
+           :with-msg-init :with-msg-init-size :with-msg-init-data
            :msg-size
            :msg-copy
 

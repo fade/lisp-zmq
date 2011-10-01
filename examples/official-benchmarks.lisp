@@ -6,7 +6,7 @@
     (zmq:with-socket (socket context :sub)
       (zmq:setsockopt socket :subscribe "")
       (zmq:bind socket address)
-      (zmq:with-msg (message)
+      (zmq:with-msg-init (message)
         (flet ((receive-message ()
                  (zmq:recv socket message)
                  (when (/= (zmq:msg-size message) message-size)
