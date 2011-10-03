@@ -31,3 +31,16 @@
           ((= i message-count))
         (zmq:with-msg-init-size (message message-size)
           (zmq:send socket message))))))
+
+(defun local-lat (address message-size roundtrip-count)
+  (zmq:with-context (context 1)
+    (zmq:with-socket (socket context :rep)
+      (zmq:bind socket address)
+      (zmq:with-msg-init (message)
+        (do ((i 0 (1+ i)))
+            ((= i roundtrip-count))
+          (zmq:recv socket message)
+          (unless (eq (zmq:msg-size message) message-size)
+            (error "Message of incorrect size ~A received."
+                   (zmq:msg-size message)))
+          (zmq:send socket message))))))
