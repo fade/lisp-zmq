@@ -44,3 +44,21 @@
             (error "Message of incorrect size ~A received."
                    (zmq:msg-size message)))
           (zmq:send socket message))))))
+
+(defun remote-lat (address message-size roundtrip-count)
+  (zmq:with-context (context 1)
+    (zmq:with-socket (socket context :req)
+      (zmq:connect socket address)
+      (zmq:with-msg-init-size (message message-size)
+        (let* ((elapsed-time (zmq:with-stopwatch
+                               (do ((i 0 (1+ i)))
+                                   ((= i roundtrip-count))
+                                 (zmq:send socket message)
+                                 (zmq:recv socket message)
+                                 (unless (eq (zmq:msg-size message) message-size)
+                                   (error "Message of incorrect size ~A received."
+                                          (zmq:msg-size message))))))
+               (latency (/ elapsed-time (* roundtrip-count 2))))
+          (format t "message size: ~A [B]~%" message-size)
+          (format t "roundtrip count: ~A~%" roundtrip-count)
+          (format t "average latency: ~,3F [us]~%" latency))))))
