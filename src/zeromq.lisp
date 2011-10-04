@@ -270,11 +270,11 @@ size SIZE."
           (progn ,@body)
        (ignore-errors (call-ffi -1 '%msg-close ,var)))))
 
-(defmacro with-msg-init-data ((var DATA) &body body)
+(defmacro with-msg-init-data ((var data) &body body)
   "Evaluate BODY in an environment where VAR is binded to a new message filled
 with DATA."
   `(with-foreign-object (,var 'msg)
-     (msg-init-fill %message ,data)
+     (msg-init-fill ,var ,data)
      (unwind-protect
           (progn ,@body)
        (ignore-errors (call-ffi -1 '%msg-close ,var)))))
