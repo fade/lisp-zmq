@@ -206,8 +206,8 @@ byte array."
   (etypecase data
     (string
      (with-foreign-string ((%string length) data)
-       (call-ffi -1 '%msg-init-size message length)
-       (%memcpy (%msg-data message) %string length)))
+       (call-ffi -1 '%msg-init-size message (- length 1))
+       (%memcpy (%msg-data message) %string (- length 1))))
     ((simple-array (unsigned-byte 8))
      (with-pointer-to-vector-data (ptr data)
        (let ((length (length data)))
@@ -292,7 +292,7 @@ with DATA."
   "Get the content of MESSAGE as an unsigned byte array."
   (let ((data (%msg-data message)))
     (unless (null-pointer-p data)
-      (let* ((length (- (msg-size message) 1))
+      (let* ((length (msg-size message))
              (array (make-array length :element-type '(unsigned-byte 8))))
         (with-pointer-to-vector-data (%array array)
           (%memcpy %array data length))
@@ -303,8 +303,8 @@ with DATA."
 using the character coding schema ENCODING."
   (let ((data (%msg-data message)))
     (unless (null-pointer-p data)
-      (foreign-string-to-lisp (%msg-data message)
-                              :count (- (%msg-size message) 1)
+      (foreign-string-to-lisp data
+                              :count (%msg-size message)
                               :encoding encoding))))
 
 (defun msg-copy (destination source)
