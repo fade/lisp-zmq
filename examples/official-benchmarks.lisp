@@ -21,7 +21,7 @@
             (format t "message size: ~A [B]~%" message-size)
             (format t "message count: ~A ~%" message-count)
             (format t "mean throughput ~A [msg/s]~%" (round throughput))
-            (format t "mean throughput ~A [Mb/s]~%" (round megabits))))))))
+            (format t "mean throughput ~,3F [Mb/s]~%" (round megabits))))))))
 
 (defun remote-thr (address message-size message-count)
   (zmq:with-context (context 1)
