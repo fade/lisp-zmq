@@ -344,6 +344,7 @@ using the character coding schema ENCODING."
                               ((pointerp handle)
                                (setf socket handle))
                               (t
+                               (setf socket (null-pointer))
                                (setf fd handle)))
                             (setf events (foreign-bitfield-value
                                           'event-types event-list)
