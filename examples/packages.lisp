@@ -4,4 +4,4 @@
   (:use :cl)
   (:export :local-thr :remote-thr
            :local-lat :remote-lat
-           :inproc-thr))
+           :inproc-thr :inproc-lat))
