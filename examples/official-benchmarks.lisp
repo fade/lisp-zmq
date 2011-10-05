@@ -1,5 +1,5 @@
 
-(in-package :zeromq-examples)
+(in-package :zmq-examples)
 
 (defun local-thr (address message-size message-count)
   (zmq:with-context (context 1)

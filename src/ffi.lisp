@@ -1,5 +1,5 @@
 
-(in-package :zeromq)
+(in-package :zmq)
 
 (define-foreign-library libzmq
   (t (:default "libzmq")))

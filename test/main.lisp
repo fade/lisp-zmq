@@ -1,5 +1,5 @@
 
-(in-package :zeromq-test)
+(in-package :zmq-test)
 
 (in-suite main)
 

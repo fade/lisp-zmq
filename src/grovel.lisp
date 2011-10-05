@@ -2,7 +2,7 @@
 (include "zmq.h")
 #+win32 (include "Winsock2.h")
 
-(in-package :zeromq)
+(in-package :zmq)
 
 (ctype size-t "size_t")
 

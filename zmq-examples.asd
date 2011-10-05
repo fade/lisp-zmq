@@ -1,10 +1,10 @@
 
-(defsystem zeromq-examples
-  :name "zeromq-examples"
+(defsystem zmq-examples
+  :name "zmq-examples"
   :author "Nicolas Martyanoff"
   :license "BSD"
-  :description "Examples for the zeromq binding."
-  :depends-on (:zeromq)
+  :description "Examples for the zmq binding."
+  :depends-on (:zmq)
   :components ((:module "examples"
                 :components ((:file "packages")
                              (:file "official-benchmarks"

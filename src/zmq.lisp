@@ -1,5 +1,5 @@
 
-(in-package :zeromq)
+(in-package :zmq)
 
 (defvar *errors* (make-hash-table)
   "A table mapping error nombers to their condition class")

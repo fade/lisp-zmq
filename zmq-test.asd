@@ -1,10 +1,10 @@
 
-(defsystem zeromq-test
-  :name "zeromq-test"
+(defsystem zmq-test
+  :name "zmq-test"
   :author "Nicolas Martyanoff"
   :license "BSD"
-  :description "Tests for the zeromq binding."
-  :depends-on (:zeromq :fiveam)
+  :description "Tests for the zmq binding."
+  :depends-on (:zmq :fiveam)
   :components ((:module "test"
                         :components ((:file "packages")
                                      (:file "suites"
