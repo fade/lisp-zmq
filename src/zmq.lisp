@@ -322,6 +322,62 @@ using the character coding schema ENCODING."
   (call-ffi -1 '%recv socket message
             (foreign-bitfield-value 'recv-options flags)))
 
+(defmacro with-poll-items ((items-var size-var) items &body body)
+  "Evaluate BODY in an environment where ITEMS-VAR is binded to a foreign
+  array of poll items, and SIZE-VAR is binded to the number of polled
+  items. Poll items are filled according to ITEMS. ITEMS is a list where each
+  element describe a poll item. Each description is a list where the first
+  element is a socket or file descriptor, and other elements are the events to
+  watch for, :POLLIN, :POLLOUT or :POLLERR."
+  (let ((i 0)
+        (pollitem-size (foreign-type-size 'pollitem)))
+    `(with-foreign-object (,items-var 'pollitem ,(length items))
+       ,@(mapcar (lambda (item)
+                   (prog1
+                       `(with-foreign-slots ((socket fd events revents)
+                                             (inc-pointer ,items-var
+                                                          ,(* i pollitem-size))
+                                             pollitem)
+                          (destructuring-bind (handle &rest event-list)
+                              (list ,@item)
+                            (cond
+                              ((pointerp handle)
+                               (setf socket handle))
+                              (t
+                               (setf fd handle)))
+                            (setf events (foreign-bitfield-value
+                                          'event-types event-list)
+                                  revents 0)))
+                     (incf i)))
+                 items)
+       (let ((,size-var ,(length items)))
+         ,@body))))
+
+(defmacro poll-items-aref (items i)
+  "Return a foreign pointer on the poll item of indice I in the foreign array
+ITEMS."
+  `(mem-aref ,items 'pollitem ,i))
+
+(defmacro do-poll-items ((var items nb-items) &body body)
+  "For each poll item in ITEMS, evaluate BODY in an environment where VAR is
+  binded to the poll item."
+  (let ((i (gensym)))
+    `(do ((,i 0))
+         ((= ,i ,nb-items))
+       (let ((,var (poll-items-aref ,items ,i)))
+         ,@body))))
+
+(defun poll-item-event-signaled-p (poll-item event)
+  "Return T if POLL-ITEM indicates that an event of type EVENT was detected
+  for the underlying socket or file descriptor or NIL if no event occurred."
+  (/= (logand (foreign-slot-value poll-item 'pollitem 'revents)
+              (foreign-bitfield-value 'event-types (list event))) 0))
+
+(defun poll (items nb-items timeout)
+  "Poll ITEMS with a timeout of TIMEOUT seconds, -1 meaning no time
+  limit. Return the number of items with signaled events."
+  (call-ffi -1 '%poll items nb-items timeout))
+
 (defun stopwatch-start ()
   "Start a timer, and return a handle."
   (call-ffi (null-pointer) '%stopwatch-start))
