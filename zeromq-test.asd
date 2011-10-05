@@ -8,4 +8,6 @@
   :components ((:module "test"
                         :components ((:file "packages")
                                      (:file "suites"
-                                            :depends-on ("packages"))))))
+                                            :depends-on ("packages"))
+                                     (:file "main"
+                                            :depends-on ("suites"))))))
