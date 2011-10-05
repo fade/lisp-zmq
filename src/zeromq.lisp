@@ -168,8 +168,9 @@ context CONTEXT with type TYPE."
         (call-ffi -1 '%getsockopt socket option %value %size)
         (case option
           (:identity
-           (when (> (mem-ref %size 'size-t) 0)
-             (foreign-string-to-lisp %value)))
+           (let ((size (mem-ref %size 'size-t)))
+             (when (> size 0)
+               (foreign-string-to-lisp %value :count size))))
           (:events
            (foreign-bitfield-symbols 'event-types (mem-ref %value type)))
           (t
