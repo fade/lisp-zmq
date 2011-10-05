@@ -3,4 +3,5 @@
   (:nicknames :zmq-examples)
   (:use :cl)
   (:export :local-thr :remote-thr
-           :local-lat))
+           :local-lat :remote-lat
+           :inproc-thr))
