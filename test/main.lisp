@@ -30,11 +30,11 @@
     (is (string= (zmq:msg-data-string msg) ""))
     (is (equalp (zmq:msg-data-array msg) (byte-array #())))))
 
-;;; (test unicode-messages
-;;;   (zmq:with-msg-init-data (msg "été")
-;;;     (is (= (zmq:msg-size msg) 5))
-;;;     (is (string= (zmq:msg-data-string msg) "été"))
-;;;     (is (equal (zmq:msg-data-array msg) #(195 137 116 195 137)))))
+(test unicode-messages
+  (zmq:with-msg-init-data (msg "été")
+    (is (= (zmq:msg-size msg) 5))
+    (is (string= (zmq:msg-data-string msg) "été"))
+    (is (equalp (zmq:msg-data-array msg) #(195 169 116 195 169)))))
 
 (test binary-messages
   (zmq:with-msg-init-data (msg (byte-array #(97 98 99)))
