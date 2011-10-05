@@ -283,6 +283,29 @@ with DATA."
   "Return the size in byte of the content of MESSAGE."
   (%msg-size message))
 
+(defun msg-data (message)
+  "Get a foreign pointer on the content of MESSAGE."
+  (%msg-data message))
+
+(defun msg-data-array (message)
+  "Get the content of MESSAGE as an unsigned byte array."
+  (let ((data (%msg-data message)))
+    (unless (null-pointer-p data)
+      (let* ((length (- (msg-size message) 1))
+             (array (make-array length :element-type '(unsigned-byte 8))))
+        (with-pointer-to-vector-data (%array array)
+          (%memcpy %array data length))
+        array))))
+
+(defun msg-data-string (message &key (encoding *default-foreign-encoding*))
+  "Get the content of MESSAGE as a character string. The string is decoded
+using the character coding schema ENCODING."
+  (let ((data (%msg-data message)))
+    (unless (null-pointer-p data)
+      (foreign-string-to-lisp (%msg-data message)
+                              :count (- (%msg-size message) 1)
+                              :encoding encoding))))
+
 (defun msg-copy (destination source)
   "Copy the content of the message SOURCE to the message DESTINATION."
   (call-ffi -1 '%msg-copy destination source))
