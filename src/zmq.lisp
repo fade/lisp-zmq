@@ -406,3 +406,7 @@ ITEMS."
     `(let ((,handle (stopwatch-start)))
        ,@body
        (stopwatch-stop ,handle))))
+
+(defun sleep (seconds)
+  "Sleep for SECONDS seconds."
+  (%sleep seconds))

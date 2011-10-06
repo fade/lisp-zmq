@@ -23,6 +23,7 @@
            :poll
 
            :stopwatch-start :stopwatch-stop :with-stopwatch
+           :sleep
 
            :zmq-error
            :einval-error :enodev-error :eintr-error :efault-error :enomem-error
@@ -30,4 +31,4 @@
            :enobufs-error :enetdown-error :eaddrinuse-error :eaddrnotavail-error
            :econnrefused-error :einprogress-error :enotsock-error
            :efsm-error :enocompatproto-error :eterm-error :emthread-error)
-  (:shadow :close))
+  (:shadow :close :sleep))

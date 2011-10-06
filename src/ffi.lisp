@@ -126,3 +126,6 @@
 
 (defcfun (%stopwatch-stop "zmq_stopwatch_stop") :ulong
   (watch :pointer))
+
+(defcfun (%sleep "zmq_sleep") :void
+  (seconds :int))
