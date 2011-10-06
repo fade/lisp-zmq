@@ -71,6 +71,22 @@
       (is (string= (zmq:msg-data-string msg-copy) ""))
       (is (equalp (zmq:msg-data-array msg-copy) (byte-array #()))))))
 
+(test moved-message
+  (zmq:with-msg-init-data (msg "test")
+    (zmq:with-msg-init (new-msg)
+      (zmq:msg-move new-msg msg)
+      (is (= (zmq:msg-size new-msg) 4))
+      (is (zerop (zmq:msg-size msg)))
+      (is (string= (zmq:msg-data-string new-msg) "test")))))
+
+(test moved-empty-message
+  (zmq:with-msg-init-data (msg "")
+    (zmq:with-msg-init (new-msg)
+      (zmq:msg-move new-msg msg)
+      (is (zerop (zmq:msg-size new-msg)))
+      (is (zerop (zmq:msg-size msg)))
+      (is (string= (zmq:msg-data-string new-msg) "")))))
+
 (test int-socket-options
   (zmq:with-context (context 0)
     (zmq:with-socket (socket context :sub)

@@ -15,7 +15,7 @@
            :msg-init :msg-init-size :msg-init-data :msg-close
            :with-msg-init :with-msg-init-size :with-msg-init-data
            :msg-size :msg-data :msg-data-string :msg-data-array
-           :msg-copy
+           :msg-copy :msg-move
 
            :send :recv
            :with-poll-items

@@ -319,6 +319,11 @@ using the character coding schema ENCODING."
   "Copy the content of the message SOURCE to the message DESTINATION."
   (call-ffi -1 '%msg-copy destination source))
 
+(defun msg-move (destination source)
+  "Move the content of the message SOURCE to the message DESTINATION. After
+the call, SOURCE is an empty message."
+  (call-ffi -1 '%msg-move destination source))
+
 (defun send (socket message &optional flags)
   "Queue MESSAGE to be on SOCKET."
   (call-ffi -1 '%send socket message
