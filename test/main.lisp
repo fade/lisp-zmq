@@ -8,6 +8,9 @@
               :element-type '(unsigned-byte 8)
               :initial-contents contents))
 
+(test version
+  (is (= (car (zmq:version)) 2)))
+
 (test empty-messages
   (zmq:with-msg-init (msg)
     (is (zerop (zmq:msg-size msg)))
