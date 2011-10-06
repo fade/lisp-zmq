@@ -36,6 +36,12 @@
     (is (string= (zmq:msg-data-string msg) "été"))
     (is (equalp (zmq:msg-data-array msg) #(195 169 116 195 169)))))
 
+(test vector-messages
+  (zmq:with-msg-init-data (msg #(97 98 99))
+    (is (= (zmq:msg-size msg) 3))
+    (is (string= (zmq:msg-data-string msg) "abc"))
+    (is (equalp (zmq:msg-data-array msg) (byte-array #(97 98 99))))))
+
 (test binary-messages
   (zmq:with-msg-init-data (msg (byte-array #(97 98 99)))
     (is (= (zmq:msg-size msg) 3))

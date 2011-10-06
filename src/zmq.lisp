@@ -213,7 +213,14 @@ byte array."
      (with-pointer-to-vector-data (ptr data)
        (let ((length (length data)))
          (call-ffi -1 '%msg-init-size message length)
-         (%memcpy (%msg-data message) ptr length))))))
+         (%memcpy (%msg-data message) ptr length))))
+    (vector
+     (let ((length (length data)))
+       (call-ffi -1 '%msg-init-size message length)
+       (let ((%data (%msg-data message)))
+         (do ((i 0 (1+ i)))
+             ((= i length))
+           (setf (mem-aref %data :uchar i) (aref data i))))))))
 
 (defun msg-init ()
   "Create and return a new empty message."
