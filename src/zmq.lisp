@@ -201,12 +201,12 @@ context CONTEXT with type TYPE."
 -1."
   (call-ffi 0 '%device (foreign-enum-value 'device-type type) frontend backend))
 
-(defun msg-init-fill (message data)
+(defun msg-init-fill (message data &key (encoding *default-foreign-encoding*))
   "Initialize fill and return a message. If DATA is a string, convert it to a
 byte array."
   (etypecase data
     (string
-     (with-foreign-string ((%string length) data)
+     (with-foreign-string ((%string length) data :encoding encoding)
        (call-ffi -1 '%msg-init-size message (- length 1))
        (%memcpy (%msg-data message) %string (- length 1))))
     ((simple-array (unsigned-byte 8))
@@ -244,12 +244,13 @@ byte array."
         (foreign-free %message)
         (error cond)))))
 
-(defun msg-init-data (data)
-  "Create and return a new message initialized and filled with DATA."
+(defun msg-init-data (data &key (encoding *default-foreign-encoding*))
+  "Create and return a new message initialized and filled with DATA. If DATA
+is a string, it is encoded using the character coding schema ENCODING."
   (let ((%message (foreign-alloc 'msg)))
     (handler-case
         (progn
-          (msg-init-fill %message data)
+          (msg-init-fill %message data :encoding encoding)
           %message)
       (error (cond)
         (foreign-free %message)
@@ -279,11 +280,13 @@ size SIZE."
           (progn ,@body)
        (ignore-errors (call-ffi -1 '%msg-close ,var)))))
 
-(defmacro with-msg-init-data ((var data) &body body)
+(defmacro with-msg-init-data ((var data &key (encoding *default-foreign-encoding*))
+                              &body body)
   "Evaluate BODY in an environment where VAR is binded to a new message filled
-with DATA."
+with DATA. If DATA is a string, it is encoded using the character coding
+schema ENCODING."
   `(with-foreign-object (,var 'msg)
-     (msg-init-fill ,var ,data)
+     (msg-init-fill ,var ,data :encoding ,encoding)
      (unwind-protect
           (progn ,@body)
        (ignore-errors (call-ffi -1 '%msg-close ,var)))))

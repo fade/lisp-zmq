@@ -22,7 +22,7 @@
     (is (= (zmq:msg-size msg) 16))))
 
 (test string-messages
-  (zmq:with-msg-init-data (msg "test")
+  (zmq:with-msg-init-data (msg "test" :encoding :utf-8)
     (is (= (zmq:msg-size msg) 4))
     (is (string= (zmq:msg-data-string msg) "test"))
     (is (equalp (zmq:msg-data-array msg) (byte-array #(116 101 115 116))))))
@@ -34,7 +34,7 @@
     (is (equalp (zmq:msg-data-array msg) (byte-array #())))))
 
 (test unicode-messages
-  (zmq:with-msg-init-data (msg "été")
+  (zmq:with-msg-init-data (msg "été" :encoding :utf-8)
     (is (= (zmq:msg-size msg) 5))
     (is (string= (zmq:msg-data-string msg) "été"))
     (is (equalp (zmq:msg-data-array msg) #(195 169 116 195 169)))))
@@ -58,7 +58,7 @@
     (is (equalp (zmq:msg-data-array msg) (byte-array #())))))
 
 (test copied-messages
-  (zmq:with-msg-init-data (msg "test")
+  (zmq:with-msg-init-data (msg "test" :encoding :utf-8)
     (zmq:with-msg-init (msg-copy)
       (zmq:msg-copy msg-copy msg)
       (is (= (zmq:msg-size msg-copy) 4))
@@ -75,7 +75,7 @@
       (is (equalp (zmq:msg-data-array msg-copy) (byte-array #()))))))
 
 (test moved-message
-  (zmq:with-msg-init-data (msg "test")
+  (zmq:with-msg-init-data (msg "test" :encoding :utf-8)
     (zmq:with-msg-init (new-msg)
       (zmq:msg-move new-msg msg)
       (is (= (zmq:msg-size new-msg) 4))
