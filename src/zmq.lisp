@@ -2,7 +2,7 @@
 (in-package :zmq)
 
 (defvar *errors* (make-hash-table)
-  "A table mapping error nombers to their condition class")
+  "A table mapping error numbers to their condition class")
 
 (define-condition zmq-error (error)
   ((code
