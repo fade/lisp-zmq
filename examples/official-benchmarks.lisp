@@ -101,7 +101,7 @@
               (format t "message count: ~A~%" message-count)
               (format t "message size: ~A [B]~%" message-size)
               (format t "mean throughput ~A [msg/s]~%" (round throughput))
-              (format t "mean throughput ~,3F [Mb/s]~%" (round megabits)))))
+              (format t "mean throughput ~,3F [Mb/s]~%" megabits))))
         (bordeaux-threads:join-thread thread)))))
 
 (defun inproc-lat (message-size roundtrip-count)
