@@ -87,7 +87,7 @@ function is returned."
   (call-ffi -1 '%term context))
 
 (defmacro with-context ((var io-threads) &body body)
-  "Evaluate BODY in an environment where VAR is binded to a context created
+  "Evaluate BODY in an environment where VAR is bound to a context created
 with IO-THREADS threads."
   `(let ((,var (init ,io-threads)))
      (unwind-protect
@@ -104,7 +104,7 @@ with IO-THREADS threads."
   (call-ffi -1 '%close socket))
 
 (defmacro with-socket ((var context type) &body body)
-  "Evaluate BODY in an environment where VAR is binded to a socket created in
+  "Evaluate BODY in an environment where VAR is bound to a socket created in
 context CONTEXT with type TYPE."
   `(let ((,var (socket ,context ,type)))
      (unwind-protect
@@ -263,8 +263,7 @@ is a string, it is encoded using the character coding schema ENCODING."
     (foreign-free message)))
 
 (defmacro with-msg-init ((var) &body body)
-  "Evaluate BODY in an environment where VAR is binded to a new empty
-  message."
+  "Evaluate BODY in an environment where VAR is bound to a new empty message."
   `(with-foreign-object (,var 'msg)
      (call-ffi -1 '%msg-init ,var)
      (unwind-protect
@@ -272,8 +271,8 @@ is a string, it is encoded using the character coding schema ENCODING."
        (ignore-errors (call-ffi -1 '%msg-close ,var)))))
 
 (defmacro with-msg-init-size ((var size) &body body)
-  "Evaluate BODY in an environment where VAR is binded to a new message of
-size SIZE."
+  "Evaluate BODY in an environment where VAR is bound to a new message of size
+SIZE."
   `(with-foreign-object (,var 'msg)
      (call-ffi -1 '%msg-init-size ,var ,size)
      (unwind-protect
@@ -282,7 +281,7 @@ size SIZE."
 
 (defmacro with-msg-init-data ((var data &key (encoding *default-foreign-encoding*))
                               &body body)
-  "Evaluate BODY in an environment where VAR is binded to a new message filled
+  "Evaluate BODY in an environment where VAR is bound to a new message filled
 with DATA. If DATA is a string, it is encoded using the character coding
 schema ENCODING."
   `(with-foreign-object (,var 'msg)
@@ -338,8 +337,8 @@ the call, SOURCE is an empty message."
             (foreign-bitfield-value 'recv-options flags)))
 
 (defmacro with-poll-items ((items-var size-var) items &body body)
-  "Evaluate BODY in an environment where ITEMS-VAR is binded to a foreign
-  array of poll items, and SIZE-VAR is binded to the number of polled
+  "Evaluate BODY in an environment where ITEMS-VAR is bound to a foreign
+  array of poll items, and SIZE-VAR is bound to the number of polled
   items. Poll items are filled according to ITEMS. ITEMS is a list where each
   element describe a poll item. Each description is a list where the first
   element is a socket or file descriptor, and other elements are the events to
@@ -376,7 +375,7 @@ ITEMS."
 
 (defmacro do-poll-items ((var items nb-items) &body body)
   "For each poll item in ITEMS, evaluate BODY in an environment where VAR is
-  binded to the poll item."
+  bound to the poll item."
   (let ((i (gensym)))
     `(do ((,i 0))
          ((= ,i ,nb-items))
