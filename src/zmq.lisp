@@ -389,7 +389,7 @@ ITEMS."
               (foreign-bitfield-value 'event-types (list event))) 0))
 
 (defun poll (items nb-items timeout)
-  "Poll ITEMS with a timeout of TIMEOUT seconds, -1 meaning no time
+  "Poll ITEMS with a timeout of TIMEOUT microseconds, -1 meaning no time
   limit. Return the number of items with signaled events."
   (call-ffi -1 '%poll items nb-items timeout))
 
