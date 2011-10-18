@@ -21,7 +21,6 @@
            :with-poll-items
            :poll-items-aref :do-poll-items :poll-item-event-signaled-p
            :poll
-           :event-types
 
            :stopwatch-start :stopwatch-stop :with-stopwatch
            :sleep
