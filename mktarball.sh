@@ -2,7 +2,7 @@
 
 files=$(git ls-files)
 version=$(./version.sh)
-dirname=cl-zmq-$version
+dirname=lisp-zmq-$version
 tarball=$dirname.tgz
 
 git archive --format=tar --prefix=$dirname/ HEAD | gzip >| $tarball
