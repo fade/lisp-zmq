@@ -382,11 +382,11 @@ ITEMS."
        (let ((,var (poll-items-aref ,items ,i)))
          ,@body))))
 
-(defun poll-item-event-signaled-p (poll-item &rest event)
-  "Return T if POLL-ITEM indicates that an event of type EVENT was detected
-  for the underlying socket or file descriptor or NIL if no event occurred."
+(defun poll-item-events-signaled-p (poll-item &rest events)
+  "Return T if POLL-ITEM indicates that one or more of the listed EVENTS types was
+   detected for the underlying socket or file descriptor or NIL if no event occurred."
   (/= (logand (foreign-slot-value poll-item 'pollitem 'revents)
-              (foreign-bitfield-value 'event-types event)) 0))
+              (foreign-bitfield-value 'event-types events)) 0))
 
 (defun poll (items nb-items timeout)
   "Poll ITEMS with a timeout of TIMEOUT microseconds, -1 meaning no time

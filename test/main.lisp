@@ -153,7 +153,7 @@
                            ((sub-socket :pollin))
         (let ((nb-signaled-items (zmq:poll items nb-items -1)))
           (is (= nb-signaled-items 1))
-          (is-true (zmq:poll-item-event-signaled-p
+          (is-true (zmq:poll-item-events-signaled-p
                     (zmq:poll-items-aref items 0) :pollin))
           (zmq:with-msg-init (msg)
             (zmq:recv sub-socket msg)

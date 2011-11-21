@@ -19,7 +19,7 @@
 
            :send :recv
            :with-poll-items
-           :poll-items-aref :do-poll-items :poll-item-event-signaled-p
+           :poll-items-aref :do-poll-items :poll-item-events-signaled-p
            :poll
 
            :stopwatch-start :stopwatch-stop :with-stopwatch
