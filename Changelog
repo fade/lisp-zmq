@@ -1,4 +1,12 @@
 
-Version 1.0 (2011-10-06)
+Version 1.1.0 (2011-11-22)
+
+- Make poll item testing easier (thanks to Eric Sessoms).
+- Fix the docstring of POLL.
+- Fix spelling mistakes in docstrings.
+- Small fixes in benchmarks.
+
+
+Version 1.0.0 (2011-10-06)
 
 - First release.
